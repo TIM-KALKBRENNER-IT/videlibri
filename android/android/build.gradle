@@ -2,22 +2,26 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-parcelize'
+    id 'org.jetbrains.kotlin.android'
 }
+
+
 
 
 android
 {
-  compileSdkVersion 34
-  buildToolsVersion "30.0.3"
+  namespace "de.benibela.videlibri"
+  compileSdkVersion 35
+  buildToolsVersion "35.0.0"
   viewBinding.enabled = true
   ndkVersion "19.2.5345600"
   
   defaultConfig
   {
     minSdkVersion 14
-    targetSdkVersion 34
-    ndk {
-      abiFilters 'armeabi-v7a', 'x86', 'armeabi', 'arm64-v8a', 'x86_64'
+      targetSdkVersion 35
+      ndk {
+      abiFilters 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
     }
   }
 
@@ -25,6 +29,10 @@ android
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
+    kotlinOptions {
+        jvmTarget = '1.8'
+
+    }
 
   sourceSets {
      main {
@@ -55,6 +63,9 @@ android
   
   buildFeatures {
     viewBinding true
+      //todo: AGP updater put renderScript and aidl there. Is that actually needed?
+      renderScript true
+      aidl true
   }
 
   buildTypes {
@@ -68,9 +79,9 @@ android
     debug {
       applicationIdSuffix '.debug'
       manifestPlaceholders = [ applicationLabel: "DebugVideLibri" ]
-
+        //without minify it gives "D8: Cannot fit requested classes in a single dex file" error
       minifyEnabled true
-      shrinkResources true
+
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
   }
@@ -80,14 +91,17 @@ android
 
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
+    //appcompat 1.7.1 requires higher minSdk
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation "ch.acra:acra-core:5.9.7"
-    implementation "ch.acra:acra-http:5.9.7"
-    implementation "ch.acra:acra-dialog:5.9.7"
+    implementation "ch.acra:acra-core:5.10.1"
+    implementation "ch.acra:acra-http:5.10.1"
+    implementation "ch.acra:acra-dialog:5.10.1"
     implementation 'com.squareup.okhttp3:okhttp:3.12.13'
-    implementation "com.getkeepsafe.relinker:relinker:1.4.4"
+    implementation "com.getkeepsafe.relinker:relinker:1.4.5"
     //implementation 'androidx.core:core-ktx:+' does not work with minSdk 14
 }
+
+
 

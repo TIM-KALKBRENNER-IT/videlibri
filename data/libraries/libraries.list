@@ -179,7 +179,6 @@ DE_Bayern_Erlangen_Ub
 DE_Bayern_F+uerth_Vb
 DE_Bayern_Ingolstadt_Stb
 DE_Bayern_Landshut_Stb
-DE_Bayern_M+uenchen_Alpen
 DE_Bayern_M+uenchen_Stb
 DE_Bayern_M+uenchen_UbLMU
 DE_Bayern_M+uenchen_UbTUM
@@ -304,7 +303,6 @@ DE_Nordrhein-Westfalen_Mettmann_Stb
 DE_Nordrhein-Westfalen_Minden_Stb
 DE_Nordrhein-Westfalen_Monheim++am++Rhein_Stb
 DE_Nordrhein-Westfalen_Neuss_Stb
-DE_Nordrhein-Westfalen_Oberhausen_Stb
 DE_Nordrhein-Westfalen_Oer-Erkenschwick_Stb
 DE_Nordrhein-Westfalen_Paderborn_Stb
 DE_Nordrhein-Westfalen_Pulheim_Stb
@@ -358,6 +356,7 @@ DE_Sachsen_Leipzig_Hmt
 DE_Sachsen_Leipzig_Stb
 DE_Sachsen_Leipzig_Ub
 DE_Sachsen_Pirna_Stb
+DE_Sachsen_Wurzen_Stb
 DE_Sachsen_Zittau_Hsb
 DE_Sachsen_Zwickau_Hsb
 DE_Schleswig-Holstein_Kiel_Fhb
@@ -366,7 +365,9 @@ DE_Schleswig-Holstein_Kiel_Stb
 DE_Schleswig-Holstein_Kiel_Ub
 DE_Schleswig-Holstein_L+uebeck_Stb
 DE_Schleswig-Holstein_L+uebeck_ZHb
+DE_Schleswig-Holstein_Stockelsdorf_Gb
 DE_Th+ueringen_Erfurt_Fhb
+DE_Th+ueringen_Erfurt_Medienstelle
 DE_Th+ueringen_Erfurt_Stb
 DE_Th+ueringen_Erfurt_Ub
 DE_Th+ueringen_Ilmenau_Ub

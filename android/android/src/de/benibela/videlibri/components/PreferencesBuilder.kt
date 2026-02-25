@@ -173,7 +173,7 @@ class SeekBarBuilder(ctx: Context, customPreference: SeekBarPreference?):
             var fakeProperty: Int
                 get() = getterTransform( p.get() )
                 set(value) {
-                    p.set( setterTransform( value ) );
+                    p.set( setterTransform( value ) )
                   //  Log.i("videlibriLOG", "$value  -> ${setterTransform( value )}  -> ${p.get()}")
                 }
             fun setterTransform(x: Int) = round( 5 * (2.0.pow(x/180.0)) ).toInt()

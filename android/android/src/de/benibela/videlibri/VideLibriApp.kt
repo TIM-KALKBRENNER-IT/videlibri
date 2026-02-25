@@ -40,7 +40,7 @@ class VideLibriApp : Application() {
 
         //or attachBaseContext?
         initAcra {
-            buildConfigClass = de.benibela.videlibri.BuildConfig::class.java
+            buildConfigClass = BuildConfig::class.java
             reportFormat = StringFormat.KEY_VALUE_LIST
             httpSender {
                 uri = "https://www.benibela.de/autoFeedback.php?app=VideLibriA${Build.VERSION.SDK_INT}"
@@ -113,7 +113,7 @@ class VideLibriApp : Application() {
         @JvmStatic fun updateAccount(acc: Bridge.Account?, autoUpdate: Boolean, forceExtend: Boolean) {
             if (acc == null) {
                 if (updateWakeLock == null)
-                    (currentContext()?.getSystemService(Context.POWER_SERVICE) as PowerManager?)?.apply {
+                    (currentContext()?.getSystemService(POWER_SERVICE) as PowerManager?)?.apply {
                         newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "videlibri:updateLock").apply {
                             acquire((10 * 60 * 1000).toLong())
                             setReferenceCounted(false)
@@ -352,7 +352,7 @@ class VideLibriApp : Application() {
                 try {
                     val temp = JSONArray(prefs.getString("filterHistory", "[]"))
                     filterHistory = (0 until temp.length()).map { temp.getString(it) }.toTypedArray()
-                } catch (e: JSONException) {
+                } catch (_: JSONException) {
                     Log.i("videlibri", "Failed to parse filter history")
                 }
                 importExportFileName = prefs.getString("importExportFileName", "") ?: ""

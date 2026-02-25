@@ -110,7 +110,7 @@ open class MultiLevelListView @JvmOverloads constructor(context: Context, attrs:
             val bits = bitsPerLevel
             val pos = idToPosition(id).clone()
             val level = pos.size
-            val ancestors = (0..level).map { id shr (bits * it) }.reversed()
+            val ancestors = (0..level).map { id shr (bits * it) }.asReversed()
             for (i in 0 until level)
                 if (pos[i] >= getChildCount(ancestors[i]))
                     return false

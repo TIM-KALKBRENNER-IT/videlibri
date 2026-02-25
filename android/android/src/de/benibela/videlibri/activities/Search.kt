@@ -152,7 +152,7 @@ class Search: VideLibriBaseActivity(), SearchEventHandler {
 
     private fun obtainSearcher() {
         gcSearchers()
-        if (searchers.size > 0) {
+        if (searchers.isNotEmpty()) {
             val candidate = searchers[searchers.size - 1]
             if (candidate.libId == state.libId)
                 when (candidate.state) {
@@ -225,7 +225,7 @@ class Search: VideLibriBaseActivity(), SearchEventHandler {
                 "defaultLibId" to state.libId,
                 "reason" to getString(R.string.search_selectlib),
                 "search" to true
-        ) {resultCode, data -> withActivity<Search> {
+        ) { resultCode, _ -> withActivity<Search> {
             if (resultCode == Activity.RESULT_OK) {
                 state.libId = LibraryList.lastSelectedLibId ?: ""
                 state.libName = LibraryList.lastSelectedLibName ?: ""

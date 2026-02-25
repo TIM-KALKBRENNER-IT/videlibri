@@ -39,7 +39,8 @@
           <th t:condition='@abbr="Mediengruppe" or contains(a/@href, "Sort$MediaGroup")'/>?
           <th t:condition='@abbr="Zweigstelle" or contains(a/@href, "Sort$Branch")'/>?
           <th t:condition='@abbr="Frist" or contains(a/@href, "Sort$DueDate")'/>
-          <th/>*
+          <t:element t:condition="self::td or self::th"/>*
+                              
           </t:siblings-header>
           <!--<th abbr="Verlängerbar">Verlängerbar</th>-->          
         </tr>
@@ -58,7 +59,7 @@
           <TD>{book.author := local:parse-column(.)}</TD>
           <TD>{book.category := local:parse-column(.)}</TD>
           <TD>{book.libraryBranch := local:parse-column(.)}</TD>
-          <TD>{book.duedate := parse-date(extract(., "[0-9./-]{6,}"))}</TD>
+          <TD>{book.duedate := parse-date(extract(., "[0-9./-]{6,}")[.] otherwise .)}</TD>
           <td>{
           .//input!(
             if (@type = "checkbox") then $book._renewid := string(@name)

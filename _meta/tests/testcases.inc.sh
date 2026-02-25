@@ -104,7 +104,7 @@ test lbs list loans.stralsund.html
 mkdir -p $OUTPATH/aDISWeb
 
 
-test aDISWeb accountOverview accountOverview_munich.html accountOverview_nurnberg.html accountOverview_nurnberg.fake.html accountOverview_testhdm.html
+test aDISWeb 'accountOverview{@$TEMPLATEPATH/aDISWeb/functions.xq}' accountOverview_munich.html accountOverview_nurnberg.html accountOverview_nurnberg.fake.html accountOverview_testhdm.html
 test aDISWeb 'list{splitIndex:=0,mode:=\"lend\"}' list_munich.html list_nurnberg.html list_testhdm.html list_testhdm2.html 
 test aDISWeb 'list{splitIndex:=0,mode:=\"provided\"}' list_provided_testhdm.html
 test aDISWeb 'list{splitIndex:=0,mode:=\"requested\"}' list_requested_munich.html list_requested_testhdm.html
@@ -117,7 +117,7 @@ test aDISWeb searchBasicForm search_go-back.voebb..html search_due..html  search
 
 test aDISWeb searchDetails searchDetails_albstadt.html searchDetails_due.html searchDetails_heilbronn.html searchDetails_heilbronn2.html searchDetails_single-result_hdmtest.html searchDetails_newdue.html searchDetails_new.voebb.html searchDetails_new2.voebb.html searchDetails_munich.html
 
-test aDISWeb 'connected{connect-target:=\"search\"}' connected_furtwangen.html connected_voebb1.html connected_voebb2.html
+test aDISWeb 'connected{@$TEMPLATEPATH/aDISWeb/functions.xq -e "connect-target:=\"search\""}' connected_furtwangen.html connected_voebb1.html connected_voebb2.html
 
 test aDISWeb searchInputForm searchInputForm_mannheim-hsb.html 
 

@@ -26,11 +26,19 @@ import de.benibela.videlibri.Accounts
 import de.benibela.videlibri.R
 import de.benibela.videlibri.accounts
 import de.benibela.videlibri.databinding.ImportexportBinding
-import de.benibela.videlibri.jni.*
-import de.benibela.videlibri.utils.*
+import de.benibela.videlibri.jni.Bridge
+import de.benibela.videlibri.jni.ImportExportData
+import de.benibela.videlibri.jni.ImportExportFlag
+import de.benibela.videlibri.jni.globalOptionsAndroid
+import de.benibela.videlibri.jni.save
+import de.benibela.videlibri.utils.currentActivity
+import de.benibela.videlibri.utils.setCheckedItemPositions
+import de.benibela.videlibri.utils.showDialog
+import de.benibela.videlibri.utils.showMessage
+import de.benibela.videlibri.utils.startActivityForResult
+import de.benibela.videlibri.utils.takeNonEmpty
 import kotlinx.parcelize.Parcelize
 import java.io.File
-import java.util.*
 import kotlin.math.abs
 
 //https://stackoverflow.com/a/22751867
@@ -217,7 +225,7 @@ class Import : ImportExportBase() {
 
     override fun onPostResume() {
         super.onPostResume()
-        if (Accounts.filterWithRunningUpdate().size > 0) {
+        if (Accounts.filterWithRunningUpdate().isNotEmpty()) {
             showFinalMessage(R.string.import_not_while_update_runs)
             return
         }

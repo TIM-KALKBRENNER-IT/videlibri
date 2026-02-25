@@ -7,11 +7,22 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.*
-import de.benibela.videlibri.*
+import de.benibela.videlibri.Accounts
+import de.benibela.videlibri.R
+import de.benibela.videlibri.accounts
 import de.benibela.videlibri.databinding.AccountinfoBinding
-import de.benibela.videlibri.jni.*
-import de.benibela.videlibri.utils.*
+import de.benibela.videlibri.jni.Bridge
+import de.benibela.videlibri.jni.LibraryDetails
+import de.benibela.videlibri.jni.accountMightWork
+import de.benibela.videlibri.jni.globalOptionsAndroid
+import de.benibela.videlibri.jni.save
+import de.benibela.videlibri.jni.searchMightWork
+import de.benibela.videlibri.utils.isVisibleNotGone
+import de.benibela.videlibri.utils.showDialog
+import de.benibela.videlibri.utils.showMessage
+import de.benibela.videlibri.utils.showMessageYesNo
+import de.benibela.videlibri.utils.startActivityForResult
+import de.benibela.videlibri.utils.withActivity
 
 internal open class EmptyTextWatcher : TextWatcher {
     override fun beforeTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}

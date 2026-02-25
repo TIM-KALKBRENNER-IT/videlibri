@@ -1,0 +1,5 @@
+* Update to Kotlin 2.1.20, appcompat 1.6.1, material 1.11.0
+* Update HTTPS keystore 
+* fix blb login
+* add Stockelsdorf
+* disable edge-to-edge layout for Android 15+

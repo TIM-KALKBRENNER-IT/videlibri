@@ -155,9 +155,12 @@ downloadTable)
     
     
   create-common-interface)
+    set -e
     xidel interface.pretty --module interface-generator-pretty-to-xml.xqm -e 'serialize(igp:make($raw), {"indent": true()})' | tee interface.xml
     xidel interface.xml --module interface-generator.xqm -e '"//This file has been generated automatically. Do not edit it, do not read it.", "//Refer to the interface.pretty file", ig:pascal-make(/)' | tee commoninterface.pas
+    if [ ! -s commoninterface.pas ]; then exit; fi
     xidel interface.xml --module interface-generator.xqm -e '"//This file has been generated automatically. Do not edit it, do not read it.", "//Refer to the interface.pretty file", ig:kotlin-make(/)' | tee android/android/src/de/benibela/videlibri/jni/CommonInterface.kt
+    if [ ! -s android/android/src/de/benibela/videlibri/jni/CommonInterface.kt ]; then exit; fi
     xidel interface.xml --module interface-generator.xqm -e 'ig:code-to-add-manually(/)' 
 #    xidel interface.xml --module interface-generator.xqm -e 'ig:pascal-kotlin-make-bridge(/)'
 
@@ -205,7 +208,7 @@ downloadTable)
        let $filename := x"{$fastlane}/de/changelogs/{$version/@version}.txt"
        where not(file:exists($filename))
        return $version!(file:write-text($filename, join((.//fix|.//add|.//change)!concat("* ", .), $line-ending))) '
-    while [[ $( stat $fastlane/de/changelogs/$INTVERSION.txt -c %s ) > 500 ]]; do 
+    while [[ $( stat $fastlane/de/changelogs/$INTVERSION.txt -c %s ) -gt 500 ]]; do 
       echo changelog too big;
       stat $fastlane/de/changelogs/$INTVERSION.txt -c %s
       vim $fastlane/de/changelogs/$INTVERSION.txt
@@ -214,7 +217,7 @@ downloadTable)
       cp $fastlane/de/changelogs/$INTVERSION.txt $fastlane/en-US/changelogs/$INTVERSION.txt
       vim $fastlane/en-US/changelogs/$INTVERSION.txt
     fi
-    while [[ $( stat $fastlane/en-US/changelogs/$INTVERSION.txt -c %s ) > 500 ]]; do 
+    while [[ $( stat $fastlane/en-US/changelogs/$INTVERSION.txt -c %s ) -gt 500 ]]; do 
       echo changelog too big;
       stat $fastlane/en-US/changelogs/$INTVERSION.txt -c %s
       vim $fastlane/en-US/changelogs/$INTVERSION.txt
@@ -278,6 +281,7 @@ src)
 ;;
 
 	release)
+	  hg up
 	  ./manage.sh changelog		
 	  rm ~/hg/components/pascal/lib/*/*.o ~/hg/components/pascal/lib/*/*.ppu ~/hg/components/pascal/*.ppu ~/hg/components/pascal/data/*.ppu  lib/*/*.ppu
 	  

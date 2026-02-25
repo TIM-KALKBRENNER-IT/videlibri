@@ -184,7 +184,7 @@ object CoverLoader {
                         oldCover.recycle()
                         bestCover = cover
                     } else cover.recycle()
-                } catch (e: Throwable) {
+                } catch (_: Throwable) {
                     Log.i("COVER LOADER", "Failed to load image $url")
                 }
                 bestCover?.takeIf { it.width >= task.size.minWidth && it.height >= task.size.minHeight }
@@ -213,11 +213,11 @@ object CoverLoader {
                 if (scale < 1.0 - epsilon && scale > 1 + epsilon) try {
                     bestCover = Bitmap.createScaledBitmap(cover, (cover.width * scale).toInt(), (cover.height * scale).toInt(), true)
                     if (bestCover != cover) cover.recycle()
-                } catch (e: Throwable) {
+                } catch (_: Throwable) {
                     return@loadBookCover
                 }
-                Log.i("IMAGE SIZING", "Final size: ${bestCover?.width}x${bestCover?.height}  ${bestCover?.density}")
-                bestCover?.density = Bitmap.DENSITY_NONE
+                Log.i("IMAGE SIZING", "Final size: ${bestCover.width}x${bestCover.height}  ${bestCover.density}")
+                bestCover.density = Bitmap.DENSITY_NONE
             }
         }
 

@@ -99,10 +99,10 @@ build)
   esac
 
   
-  nativeBuild $BUILDARM     armeabi    arm-linux-androideabi-strip   $FPC_ARM    arm
-  nativeBuild $BUILDX86     x86        i686-linux-android-strip      $FPC_386    i386
-  nativeBuild $BUILDARM64   arm64-v8a  aarch64-linux-android-strip   $FPC_ARM64  aarch64
-  nativeBuild $BUILDX64     x86_64     strip                         $FPC_X64    x86_64
+  nativeBuild $BUILDARM     armeabi-v7a   arm-linux-androideabi-strip   $FPC_ARM    arm
+  nativeBuild $BUILDX86     x86           i686-linux-android-strip      $FPC_386    i386
+  nativeBuild $BUILDARM64   arm64-v8a     aarch64-linux-android-strip   $FPC_ARM64  aarch64
+  nativeBuild $BUILDX64     x86_64        strip                         $FPC_X64    x86_64
 
   ./manage.sh build-gradle $BUILDMODE
 ;;
@@ -150,8 +150,7 @@ install)
 ;;
 
 clean)
-  rm android/libs/armeabi/liblclapp.so; 
-  rm android/libs/x86/liblclapp.so; 
+  rm android/libs/*/liblclapp.so; 
   ./gradlew clean
 ;;
 
@@ -166,6 +165,7 @@ brokenServers)
    export SERVERLIST=../data/libraries/brokenServers.list
    export RESSERVERLIST=android/res/values/brokenServers.xml
    export TMPFILE=__vl__certificate.pem
+   export TMPFILE2=__vl__certificate2.pem
    export KEYTOOL=keytool
    export LANG=C.utf8
    export LC_ALL=C.utf8
@@ -178,13 +178,16 @@ brokenServers)
    FINGERPRINTFILEOLD=keystoreold.bks.fingerprints
    TEMPKEYSTORE=__vl__keystore.bks 
 
-
+   echo BOUNCYCASTLE: $bouncy
 
    echo '<?xml version="1.0" encoding="utf-8"?>' > $RESSERVERLIST
    echo "<resources>" >> $RESSERVERLIST
    echo '<string-array name="broken_servers"  translatable="false">' >> $RESSERVERLIST
    
    rm $KEYSTORE $KEYSTOREOLD $FINGERPRINTFILE $FINGERPRINTFILEOLD
+   #cp certs/keystore/empty.bks $KEYSTORE
+   #cp certs/keystore/emptyold.bks $KEYSTOREOLD
+   
    i=0
    (cat $SERVERLIST; ls certs/*.cer certs/intermediate/*.cer) |  while read server; do
      if [[ -n "$server" ]]; then      
@@ -208,7 +211,8 @@ brokenServers)
        fi
        
        cp $KEYSTORE $TEMPKEYSTORE
-       yes | $KEYTOOL       -import       -v       -trustcacerts       -alias $i       -file <(openssl x509 -in $TMPFILE)       -keystore $KEYSTORE       -storetype BKS       -provider org.bouncycastle.jce.provider.BouncyCastleProvider       -providerpath $BOUNCYCASTLE       -storepass $PASSWORD
+       openssl x509 -in $TMPFILE > $TMPFILE2
+       yes | $KEYTOOL       -import       -v       -trustcacerts       -alias $i       -file $TMPFILE2       -keystore $KEYSTORE       -storetype BKS       -provider org.bouncycastle.jce.provider.BouncyCastleProvider       -providerpath $BOUNCYCASTLE       -storepass $PASSWORD ||  echo keytool error ;
        
        echo -en "$server\t" >> $FINGERPRINTFILE
        if diff -q $KEYSTORE $TEMPKEYSTORE; then
@@ -218,7 +222,7 @@ brokenServers)
          
          
          echo -en "$server\t" >> $FINGERPRINTFILEOLD
-         yes | $KEYTOOL       -import       -v       -trustcacerts       -alias $i       -file <(openssl x509 -in $TMPFILE)       -keystore $KEYSTOREOLD       -storetype BKS-V1       -provider org.bouncycastle.jce.provider.BouncyCastleProvider       -providerpath $BOUNCYCASTLE       -storepass $PASSWORD
+         yes | $KEYTOOL       -import       -v       -trustcacerts       -alias $i       -file $TMPFILE2       -keystore $KEYSTOREOLD       -storetype BKS-V1       -provider org.bouncycastle.jce.provider.BouncyCastleProvider       -providerpath $BOUNCYCASTLE       -storepass $PASSWORD
          LANG=C keytool -list -v -alias $i -keystore $KEYSTOREOLD -provider org.bouncycastle.jce.provider.BouncyCastleProvider -providerpath $BOUNCYCASTLE -storetype BKS-V1 -storepass $PASSWORD | grep SHA256: >> $FINGERPRINTFILEOLD
        fi
        
@@ -249,7 +253,7 @@ brokenServers)
    
 
    
-   rm $TMPFILE
+   rm $TMPFILE $TMPFILE2
 ;;
 
 setupbinutils)
@@ -305,6 +309,8 @@ setupfpccrosscfg)
   -Fu/usr/local/lib/fpc/$fpcversion/units/$fpctarget/rtl  
   
   #ifdef android
+  -k-z common-page-size=16384
+  -k-z max-page-size=16384
   '
 
   function singleplatform(){
@@ -346,10 +352,10 @@ fakesignature)
 symbols)
   rm -rf symbols
   mkdir -p symbols symbols/armeabi-v7a/ symbols/arm64-v8a/ symbols/x86 symbols/x86_64
-  ln liblclapp.unstripped.release.arm64-v8a.so symbols/arm64-v8a/liblclapp.so
-  ln liblclapp.unstripped.release.armeabi.so   symbols/armeabi-v7a/liblclapp.so
-  ln liblclapp.unstripped.release.x86_64.so    symbols/x86/liblclapp.so
-  ln liblclapp.unstripped.release.x86.so       symbols/x86_64/liblclapp.so
+  ln liblclapp.unstripped.release.arm64-v8a.so     symbols/arm64-v8a/liblclapp.so
+  ln liblclapp.unstripped.release.armeabi-v7a.so   symbols/armeabi-v7a/liblclapp.so
+  ln liblclapp.unstripped.release.x86_64.so        symbols/x86/liblclapp.so
+  ln liblclapp.unstripped.release.x86.so           symbols/x86_64/liblclapp.so
   cd symbols
   zip -r symbols.zip .
   mv symbols.zip ..

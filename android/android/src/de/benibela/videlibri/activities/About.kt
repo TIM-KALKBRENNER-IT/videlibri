@@ -90,7 +90,7 @@ class About : VideLibriBaseActivity() {
         details.clear()
         try {
             details.add(0, BookDetails.Details(getString(R.string.version), "VideLibri " + packageManager.getPackageInfo("de.benibela.videlibri", 0).versionName))
-        } catch (e: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
             details.add(0, BookDetails.Details(getString(R.string.version), "VideLibri " + (changelog.firstVersion.toIntOrNull()
                     ?: 0) / 1000.0 + " ??"))
         }

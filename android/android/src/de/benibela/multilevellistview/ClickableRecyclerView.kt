@@ -3,8 +3,6 @@ package de.benibela.multilevellistview
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.view.View.OnClickListener
-import android.view.View.OnLongClickListener
 import androidx.recyclerview.widget.RecyclerView
 
 typealias OnItemClickListener = (RecyclerView, RecyclerView.ViewHolder) -> Unit
@@ -48,6 +46,7 @@ open class ClickableRecyclerView @JvmOverloads constructor(context: Context, att
     protected open fun onItemClick(vh: ViewHolder){}
     private val clickListeners = mutableListOf<OnItemClickListener>()
     fun addOnItemClickListener(listener: OnItemClickListener) { clickListeners.add(listener) }
+    @Suppress("unused")
     fun removeOnItemClickListener(listener: OnItemClickListener) { clickListeners.remove(listener) }
 
 
@@ -59,6 +58,7 @@ open class ClickableRecyclerView @JvmOverloads constructor(context: Context, att
     protected open fun onItemLongClick(vh: ViewHolder) =  false
     private val longClickListeners = mutableListOf<OnItemLongClickListener>()
     fun addOnItemLongClickListener(listener: OnItemLongClickListener) { longClickListeners.add(listener) }
+    @Suppress("unused")
     fun removeOnItemLongClickListener(listener: OnItemLongClickListener) { longClickListeners.remove(listener) }
 
 }

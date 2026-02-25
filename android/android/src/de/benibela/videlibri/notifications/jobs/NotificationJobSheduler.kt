@@ -41,7 +41,7 @@ class NotificationJobService: JobService() {
         if (id in pendingParams.indices) {
             instance = this
             pendingParams[id] = params
-            Handler().postDelayed({
+            Handler(mainLooper).postDelayed({
                 //timeout. not supposed to happen
                 jobFinish(id)
             }, 1000 * 60 * 15)

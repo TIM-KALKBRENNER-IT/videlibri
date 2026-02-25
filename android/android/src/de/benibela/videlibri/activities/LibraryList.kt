@@ -42,7 +42,7 @@ class LibraryListAdapter: MultiLevelListView.Adapter<LibraryListAdapter.Holder>(
             2 -> localLibs[position[0]][position[1]].size
             else -> 0
         }
-    } catch (e: IndexOutOfBoundsException) {
+    } catch (_: IndexOutOfBoundsException) {
         0
     }
     override fun getItemViewType(position: IntArray): Int = position.size
@@ -67,7 +67,7 @@ class LibraryListAdapter: MultiLevelListView.Adapter<LibraryListAdapter.Holder>(
             3 -> holder.text.text = getLibraryText(getLibraryId(position))
             else -> {}
         }
-    } catch (e: IndexOutOfBoundsException) {
+    } catch (_: IndexOutOfBoundsException) {
         @SuppressLint("SetTextI18n")
         holder.text.text = "MISSING"
     }
@@ -183,7 +183,7 @@ class LibraryList: VideLibriBaseActivity() {
         if (lastClickedItem <= 0) return
         val bits = adapter.bitsPerLevel
         val level = adapter.idToLevel(lastClickedItem)
-        val ancestors = (0 until level).map { lastClickedItem shr (bits * it) }.reversed()
+        val ancestors = (0 until level).map { lastClickedItem shr (bits * it) }.asReversed()
         ancestors.take(level - 1).forEach { l.expand(it) }
         (l as? ExpandableMultiLevelListView)?.autoScrollOnExpansion = true
         ancestors.takeLast(1).forEach { l.expand(it) }

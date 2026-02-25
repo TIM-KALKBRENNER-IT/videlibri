@@ -2,12 +2,11 @@
 <library>
   <longName value="Universitätsbibliothek der TUM"/>
   
-  <template value="sisis"/>  
-  <variable name="server" value="https://opac.ub.tum.de/TouchPoint/"/>
-  <variable name="startparams" value="?View=tum&amp;Language=de"/>
+  <template value="vufind"/>  
+  <variable name="baseurl" value="https://search.ub.tum.de/vufind/"/>
   
   <homepage value="http://www.ub.tum.de/"/>
-  <testing-search value="yes"/>
+  <testing-search value="unknown"/>
   <testing-account value="unknown"/>
   
 </library>

@@ -238,9 +238,6 @@ open class VideLibriBaseActivity: AppCompatActivity(){
         showMessage(tasks.joinToString("\n") { getString(it) })
     }
 
-    private val requestCodeLibraryHomepage = 29324
-    private val requestCodeLibraryCatalogue = 29325
-
     open fun onOptionsItemIdSelected(id: Int): Boolean {
         when (id) {
             android.R.id.home -> onBackPressed()

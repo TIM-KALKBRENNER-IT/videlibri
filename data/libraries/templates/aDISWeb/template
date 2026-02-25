@@ -11,8 +11,24 @@
 
 
 <action id="connect">
-  <s>$sessions-reconnects := 3,
-     $fullurl := get("fullurl", ()) otherwise concat("https://", get("server"), "/aDISWeb/app", get('startparams'))
+  <s>
+    declare function local:htmlOnLink($html, $target){
+      form($html/ancestor::form[1], "selected=ZTEXT       "||$target) 
+        otherwise vl:raise-internal("Link zur Seite " || $target || " nicht gefunden")
+    };
+    declare function local:aDISLink($link, $fallback-target){
+      let $href := $link/@href 
+      return
+      if (starts-with($href, "javascript:") or $href = "#") then 
+        let $code := extract($href, "javascript:top\.htmlOnLink\(['""](.*)['""]\)", 1)[.] 
+                     otherwise $fallback-target
+        return local:htmlOnLink($link, $code)
+      else
+       $href
+    };
+         
+    $sessions-reconnects := 3,
+    $fullurl := get("fullurl", ()) otherwise concat("https://", get("server"), "/aDISWeb/app", get('startparams'))
   </s>
 </action>
 
@@ -28,13 +44,16 @@
           <div class="error"><i class="fas"></i>{$error-login := ., i := 1000}</div>
           <p class="output-message output--error">{$error-login := ., i := 1000}</p><!--HS Offenburg-->
 
-          <!-- seems we already are on the correct page, send request again (not tested with any library) -->
+          <!-- seems we already are on the correct page. set $i to 1000 to abort loop.
+           (If an IDP system is used, the request will not be sent again. It must not be, as it would otherwise result in a 500 server error.)
+           (necessary for BLB Karlsruhe. )  -->
+          <div id="konto-services"><t:s>i:=1000</t:s></div>
           <td>Keine Ausleihen<t:s>i:=1000</t:s></td>
-          <a t:condition="contains(., 'Ausleihe') and contains(@href, '&amp;sp=SZ')"><t:s>i:=1000</t:s></a>
+          <a t:condition="contains(., 'Ausleihe') and @href[contains(., '&amp;sp=SZ') or . = '#']"><t:s>i:=1000</t:s></a>
        
           <!-- we were logged out ? -->
-          <a>Mein Konto<t:s>loginFormPost := .</t:s></a>
-  
+          <a>Mein Konto<t:s>loginFormPost := local:aDISLink(., "*SBK")</t:s></a>
+    
           <!-- redirection -->
           <form t:condition=".//@name = ('_eventId_proceed', 'SAMLResponse', 'RelayState') ">
             { $loginFormPost := form(., ( 
@@ -42,12 +61,7 @@
                 (.//*[@name="_eventId_proceed"])[1] 
               ))  }
           </form>
-          <div class="aDISMaske">
-            <input type="password" data-fld="LPASS1_1"/>
-            <input type="password" data-fld="LPASS2_1"/>
-            <input type="submit" value="Passwort &#228;ndern"/>
-            {vl:raise-internal("Das Passwort muss beim ersten Login auf der Webseite geändert werden.")}
-          </div>
+          <div class="aDISMaske"><select id="AUSGAB_1"/>{$i:=1000}<!--ordering in BLB K--></div>
           <div class="aDISMaske">{vl:raise-internal("Online-Katalog-Webseite wurde nicht erkannt.")}</div>
           <meta http-equiv="refresh">{$loginFormPost}</meta>    
           <a t:condition="contains(@href, '?')">{$loginFormPost}</a>
@@ -128,7 +142,7 @@
   <pattern href="accountOverview"/>
 
   <s>nextSplitTable := false(), $splitIndex := 1, $splitCount := 0, mode:="lend"</s>
-  <if test="$kontoPage">
+  <if test="exists($kontoPage)">
     <page url="{$kontoPage}" templateFile="list"/>
     <loop test="$nextSplitTable">
       <page url="{$nextSplitTable}" templateFile="list"/>
@@ -141,25 +155,25 @@
     <page url="{$goBackPage}" templateFile="accountOverview"/>
   </if>
   
-  <if test="$orderedMagazinePage">
+  <if test="exists($orderedMagazinePage)">
     <s>mode:="orderedMagazine"</s>
     <page url="{$orderedMagazinePage}" templateFile="list"/>
     <page url="{$goBackPage}" templateFile="accountOverview"/>
   </if>
   
-  <if test="$providedPage">
+  <if test="exists($providedPage)">
     <s>mode:="provided"</s>
     <page url="{$providedPage}" templateFile="list"/>
     <page url="{$goBackPage}" templateFile="accountOverview"/>
   </if>
 
-  <if test="$orderedPage">
+  <if test="exists($orderedPage)">
     <s>mode:="ordered"</s>
     <page url="{$orderedPage}" templateFile="list"/>
     <page url="{$goBackPage}" templateFile="accountOverview"/>
   </if>
   
-  <if test="$requestedPage">
+  <if test="exists($requestedPage)">
     <s>mode:="requested"</s>
     <page url="{$requestedPage}" templateFile="list"/>
     <page url="{$goBackPage}" templateFile="accountOverview"/>
@@ -171,7 +185,7 @@
   <s>mode:="lend"</s>
   <if test="not($splitCount)">
     <page url="{$kontoPage}" templateFile="list"/>
-    <variable name="book-list">string-join(for $book in $renew-books return x"{$book.extendid}=on", "&amp;")</variable> 
+    <variable name="book-list">string-join(for $book in $renew-books return $book.extendData, "&amp;")</variable> 
     <page url="{$extendFormPost}"> <post value="{$book-list}"/> </page>    
   </if>
   <if test="$splitCount">
@@ -179,7 +193,7 @@
     <loop var="splitIndex" list="$renew-splits">
       <page url="{$kontoPage}" templateFile="list"/>
       <page url="{$nextSplitTable}" templateFile="list"/>
-      <variable name="book-list">string-join(for $book in $renew-books[(.)._splitIndex = $splitIndex] return x"{$book.extendid}=on", "&amp;")</variable> 
+      <variable name="book-list">string-join(for $book in $renew-books[(.)._splitIndex = $splitIndex] return $book.extendData, "&amp;")</variable> 
       <page url="{$extendFormPost}" templateFile="renewed"> <post value="{$book-list}"/> </page>    
       <page url="{$goBackPage}" templateFile="accountOverview"/>
     </loop>
@@ -206,7 +220,7 @@
     }</form></pattern>
 
   
-    <variable name="book-list">string-join(for $book in $cancel-books[(.)._mode = $mode] return  x"{$book.cancelid}=on", "&amp;")</variable> 
+    <variable name="book-list">string-join(for $book in $cancel-books[(.)._mode = $mode] return  $book.cancelData, "&amp;")</variable> 
     
     <page url="{$cancelFormPost}" templateFile="renewed">
       <post value="{$book-list}"/>

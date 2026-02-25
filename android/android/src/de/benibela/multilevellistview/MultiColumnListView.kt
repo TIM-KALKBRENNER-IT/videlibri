@@ -78,7 +78,7 @@ open class MultiColumnListView @JvmOverloads constructor(context: Context, attrs
             if (!adapter.isValidId(id)) return 0
             val bits = adapter.bitsPerLevel
             val level = adapter.idToLevel(id)
-            val ancestors = (0..level).map { id shr (bits * it) }.reversed()
+            val ancestors = (0..level).map { id shr (bits * it) }.asReversed()
             for (i in 0 until level)
                 (subviews[i].adapter as? SingleLevelAdapter)?.currentParent = ancestors[i]
             var p = id
